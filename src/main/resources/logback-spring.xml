@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- Configuration for dev profile or default (no profile configured) -->
+    <springProfile name="default | dev | test | swarm">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <!-- Configuration for prod profile-->
+    <springProfile name="prod">
+        <appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/var/log/notifications/server.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/var/log/notifications/archived/server.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>5MB</maxFileSize>
+                <totalSizeCap>10GB</totalSizeCap>
+                <maxHistory>10</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} \(%-5p\) [%C{0}:%M:%L] - %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="DEFAULT"/>
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="DEFAULT"/>
+        </root>
+    </springProfile>
+
+    <!-- Configuration for swarm profile-->
+    <springProfile name="swarm">
+        <appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/var/log/notifications/server.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/var/log/notifications/archived/server.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>5MB</maxFileSize>
+                <totalSizeCap>10GB</totalSizeCap>
+                <maxHistory>10</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} \(%-5p\) [%C{0}:%M:%L] - %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="DEFAULT"/>
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="DEFAULT"/>
+        </root>
+    </springProfile>
+
+
+</configuration>
