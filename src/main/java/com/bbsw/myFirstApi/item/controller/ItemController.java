@@ -1,8 +1,7 @@
 package com.bbsw.myFirstApi.item.controller;
 
-import com.bbsw.myFirstApi.item.dto.ItemDTO;
+import com.bbsw.myFirstApi.item.dto.ItemDto;
 import com.bbsw.myFirstApi.item.service.ItemService;
-import com.bbsw.myFirstApi.supplier.dto.SupplierDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class ItemController {
     @GetMapping("/itemdata/getall")
     public ResponseEntity<?> getAllItemsData(){
 
-        List<ItemDTO> itemsData = itemService.findAllItems();
+        List<ItemDto> itemsData = itemService.findAllItems();
         try{
             return ResponseEntity.ok(itemService.findAllItems());
         }catch(Exception e){
@@ -31,7 +30,7 @@ public class ItemController {
     }
 
     @GetMapping("/itemdata")
-    public ResponseEntity<ItemDTO> getItemData(@RequestParam String code){
+    public ResponseEntity<ItemDto> getItemData(@RequestParam String code){
         try{
             return ResponseEntity.ok(itemService.findItem(code));
         }catch(Exception e){
@@ -45,7 +44,7 @@ public class ItemController {
 
         try{
 
-            ItemDTO itemDto = itemService.findItem(code);
+            ItemDto itemDto = itemService.findItem(code);
             itemService.deleteItemByCode(itemDto);
 
             return ResponseEntity.noContent().build();
@@ -57,7 +56,7 @@ public class ItemController {
     }
 
     @PostMapping("/itemdata")
-    public ResponseEntity<?> createItem(@RequestBody ItemDTO itemDto){
+    public ResponseEntity<?> createItem(@RequestBody ItemDto itemDto){
 
         if (itemService.createItem(itemDto)==null){
             return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
@@ -68,13 +67,14 @@ public class ItemController {
     }
 
     @PutMapping("/itemdata")
-    public ResponseEntity<?> updateItem(@RequestBody ItemDTO itemDto, SupplierDto supplierDto){
+    public ResponseEntity<?> updateCreateItem(@RequestBody ItemDto itemDto){
 
-            if(itemService.updateItem(itemDto, supplierDto)==null){
-                return ResponseEntity.status(HttpStatus.FOUND).body(itemDto);
-            }else{
+            if(itemService.createUpdateItem(itemDto, itemDto.getSuppliersData())==null){
                 return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
             }
+
+            return ResponseEntity.status(HttpStatus.FOUND).body(itemDto);
+
 
 }
 }

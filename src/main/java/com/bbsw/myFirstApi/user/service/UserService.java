@@ -62,7 +62,7 @@ public class UserService {
 
     }
 
-    public UserData createUser(UserDTO userDto) {
+    public UserDTO createUser(UserDTO userDto) {
 
         String username = userDto.getUsername();
         UserData userData = new UserData();
@@ -71,15 +71,16 @@ public class UserService {
         userData.setUsername(encoder.getCipher(userDto.getUsername()));
         userData.setPassword(encoder.getCipher(userDto.getPassword()));
         userData.setRol(userDto.getRol());
-        return userDataRepository.save(userData);
+        userDataRepository.save(userData);
+        return userDto;
         }else{
-            return null;
+        return userDto;
         }
 
     }
 
 
-    public UserData updateUser(UserDTO userDto){
+    public UserDTO updateUser(UserDTO userDto){
         Encoder encoder = new Encoder();
 
         String username = userDto.getUsername();
@@ -89,9 +90,10 @@ public class UserService {
             userData.setUsername(encoder.getCipher(userDto.getUsername()));
             userData.setPassword(encoder.getCipher(userDto.getPassword()));
             userData.setRol(userDto.getRol());
-            return userDataRepository.save(userData);
+            userDataRepository.save(userData);
+            return userDto;
         }else{
-            return null;
+            return userDto;
         }
     }
 

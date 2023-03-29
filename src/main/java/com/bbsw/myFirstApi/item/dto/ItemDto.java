@@ -1,8 +1,8 @@
 package com.bbsw.myFirstApi.item.dto;
 
 import com.bbsw.myFirstApi.item.enums.StateEnum;
-import com.bbsw.myFirstApi.pricereduction.model.PriceReductionData;
-import com.bbsw.myFirstApi.supplier.model.SupplierData;
+import com.bbsw.myFirstApi.pricereduction.dto.PriceReductionDto;
+import com.bbsw.myFirstApi.supplier.dto.SupplierDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ItemDTO {
+public class ItemDto {
 
     String code;
     String description;
@@ -21,10 +21,10 @@ public class ItemDTO {
     StateEnum state;
     LocalDate creationDate;
 
-    String userName;
+    String username;
 
-    private List<PriceReductionData> priceReductions;
+    private List<PriceReductionDto> priceReductions;
 
-    List<SupplierData> suppliersData;
+    List<SupplierDTO> suppliersData;
 
 }

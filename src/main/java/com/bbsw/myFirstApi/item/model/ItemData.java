@@ -3,8 +3,6 @@ package com.bbsw.myFirstApi.item.model;
 import com.bbsw.myFirstApi.item.enums.StateEnum;
 import com.bbsw.myFirstApi.pricereduction.model.PriceReductionData;
 import com.bbsw.myFirstApi.supplier.model.SupplierData;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,7 +24,7 @@ public class ItemData {
     @Column(name ="iditem")
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "itemdata_id_seq")
     @SequenceGenerator(name = "itemdata_id_seq",sequenceName = "itemdata_id_seq", allocationSize = 1, schema = "erp")
-    long idItem;
+    Long idItem;
 
     @Column(nullable = false, unique = true)
     String code;
@@ -49,7 +47,7 @@ public class ItemData {
     @Column(name = "pricereduction")
     private List<PriceReductionData> priceReductions;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "itemdata_supplierdata",
             joinColumns = @JoinColumn(name = "itemdata_id"),
@@ -70,5 +68,15 @@ public class ItemData {
         priceReductionDataList.forEach(this::addPriceReduction);
     }
 
+    public void addSupplier(SupplierData supplierData){
+        if(suppliersData ==null){
+            suppliersData =new ArrayList<>();
+        }
+        suppliersData.add(supplierData);
+        supplierData.addItem(this);
 
+    }
+    public void addSuppliers(List<SupplierData> suppliers) {
+        suppliers.forEach(this::addSupplier);
+    }
 }
