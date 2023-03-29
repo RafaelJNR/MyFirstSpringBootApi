@@ -1,13 +1,11 @@
 package com.bbsw.myFirstApi.user.service;
 
 import com.bbsw.myFirstApi.user.dto.UserDTO;
-import com.bbsw.myFirstApi.user.enums.RolEnum;
 import com.bbsw.myFirstApi.user.model.UserData;
 import com.bbsw.myFirstApi.user.repository.UserDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bbsw.myFirstApi.encoder.Encoder;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,23 +18,16 @@ public class UserService {
     public List<UserDTO> findAllUsers(){
 
         List<UserData> usersData = userDataRepository.findAll();
-        List<UserDTO> usersDTO = new ArrayList<UserDTO>();
         Encoder encoder = new Encoder();
 
-        for(int i =0; i <usersData.size(); i++){
+        return usersData.stream().map(userData -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUsername(encoder.getDecipher(userData.getUsername()));
+            userDTO.setPassword(encoder.getDecipher(userData.getPassword()));
+            userDTO.setRol(userData.getRol());
+            return userDTO;
+        }).toList();
 
-            String username = encoder.getDecipher(usersData.get(i).getUsername());
-            String password = encoder.getDecipher(usersData.get(i).getPassword());
-            String rol = String.valueOf(usersData.get(i).getRol());
-            UserDTO userDto = new UserDTO();
-            userDto.setUsername(username);
-            userDto.setPassword(password);
-            userDto.setRol(RolEnum.valueOf(rol));
-            usersDTO.add(userDto);
-
-        }
-
-        return usersDTO;
     }
     public UserDTO findUser(String username){
 
@@ -67,7 +58,7 @@ public class UserService {
         String username = userDto.getUsername();
         UserData userData = new UserData();
         Encoder encoder = new Encoder();
-        if (userDataRepository.findByUsername(username) == null){
+        if(userDataRepository.findByUsername(username) == null){
         userData.setUsername(encoder.getCipher(userDto.getUsername()));
         userData.setPassword(encoder.getCipher(userDto.getPassword()));
         userData.setRol(userDto.getRol());

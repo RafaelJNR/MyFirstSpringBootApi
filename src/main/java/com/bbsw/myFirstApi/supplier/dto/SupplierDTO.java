@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 public class SupplierDTO {
 
     String name;
     String country;
+
 
 }

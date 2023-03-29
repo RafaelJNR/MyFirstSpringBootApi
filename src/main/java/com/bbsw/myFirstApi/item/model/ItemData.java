@@ -31,7 +31,6 @@ public class ItemData {
 
     BigDecimal price;
 
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     StateEnum state;

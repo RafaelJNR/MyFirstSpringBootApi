@@ -42,14 +42,16 @@ public class UserController {
     }
 
     @GetMapping("/userdata/searchbynameandpassword")
-    public ResponseEntity<UserDTO> getUserDataByUsernameAndPassword(@RequestParam String username, String password){
+    public boolean getUserDataByUsernameAndPassword(@RequestParam String username, String password){
 
         try{
-            return ResponseEntity.ok(userService.findUserByPasswordAndUsername(username, password));
+            ResponseEntity.ok(userService.findUserByPasswordAndUsername(username, password));
+            return true;
         }catch(Exception e){
             System.out.println("Error de Servidor");
         }
-        return ResponseEntity.notFound().build();
+        ResponseEntity.notFound();
+        return false;
     }
 
     @PostMapping("/userdata")
@@ -86,8 +88,6 @@ public class UserController {
         }else{
             return ResponseEntity.status(HttpStatus.FOUND).body(userDto);
         }
-
-
 
     }
 

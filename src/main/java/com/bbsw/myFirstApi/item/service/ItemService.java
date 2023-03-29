@@ -3,13 +3,14 @@ package com.bbsw.myFirstApi.item.service;
 import com.bbsw.myFirstApi.item.dto.ItemDto;
 import com.bbsw.myFirstApi.item.model.ItemData;
 import com.bbsw.myFirstApi.item.repository.ItemDataRepository;
+import com.bbsw.myFirstApi.pricereduction.dto.PriceReductionDto;
 import com.bbsw.myFirstApi.pricereduction.model.PriceReductionData;
 import com.bbsw.myFirstApi.supplier.dto.SupplierDTO;
 import com.bbsw.myFirstApi.supplier.model.SupplierData;
 import com.bbsw.myFirstApi.supplier.repository.SupplierDataRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,14 +24,14 @@ public class ItemService {
     @Autowired
     private SupplierDataRepository supplierDataRepository;
 
+    ModelMapper modelMapper = new ModelMapper();
+
     public List<ItemDto> findAllItems(){
 
         List<ItemData> itemsData = itemDataRepository.findAll();
 
         return itemsData.stream().map(itemData -> {
             ItemDto itemDTO = new ItemDto();
-            /*itemDTO.setPriceReductions(itemData.getPriceReductions());
-            itemDTO.setSuppliersData(itemData.getSuppliersData());*/
             itemDTO.setCode(itemData.getCode());
             itemDTO.setPrice(itemData.getPrice());
             itemDTO.setDescription(itemData.getDescription());
@@ -51,9 +52,25 @@ public class ItemService {
         itemDto.setPrice(itemData.getPrice());
         itemDto.setDescription(itemData.getDescription());
         itemDto.setCreationDate(itemData.getCreationDate());
-        /*itemDto.setPriceReductions(itemData.getPriceReductions());
-        itemDto.setSuppliersData(itemData.getSuppliersData());*/
 
+        itemDto.setSuppliersData(itemData.getSuppliersData().stream().map(supplierData ->{
+            SupplierDTO supplierDTO = new SupplierDTO();
+            supplierDTO.setCountry(supplierData.getCountry());
+            supplierDTO.setName(supplierData.getName());
+            /*supplierDTO = modelMapper.map(this, SupplierDTO.class);*/
+            return supplierDTO;
+                }
+        ).toList());
+
+        itemDto.setPriceReductions(itemData.getPriceReductions().stream().map(priceReductionData ->{
+                    PriceReductionDto priceReductionDto = new PriceReductionDto();
+                    priceReductionDto.setReducedPrice(priceReductionData.getReducedPrice());
+                    priceReductionDto.setStartDate(priceReductionData.getStartDate());
+                    priceReductionDto.setEndDate(priceReductionData.getEndDate());
+                    return priceReductionDto;
+                }
+            //modelMapper.map(this, PriceReductionDto.class)
+        ).toList());
         return itemDto;
     }
 
@@ -80,7 +97,7 @@ public class ItemService {
 
     public ItemDto createUpdateItem(ItemDto itemDto, List<SupplierDTO> suppliersDTO){
 
-        if(suppliersDTO == null || itemDto == null){
+        if(itemDto == null){
             throw new RuntimeException("error");        //OJO, TE DIJO RAYCO QUE CREARAS TU PROPIA EXCEPCION
         }
 
@@ -110,16 +127,23 @@ public class ItemService {
             ).toList());
         }
 
+        if (itemDto.getSuppliersData()==null && itemDto.getSuppliersData().isEmpty()){
+            itemData.addSuppliers(itemDto.getSuppliersData().stream().map(supplierDTO ->
+                    new SupplierData(null, supplierDTO.getName(), supplierDTO.getCountry(), null)
+                    ).toList());
+        }
+
         itemDataRepository.save(itemData);
         supplierDataRepository.saveAll(suppliers);
         return new ItemDto();
     }
 
-    public void deleteItemByCode(ItemDto itemDto){                      //OJO, ESTÁ BORRANDO TODOS LOS ITEMS¿?
+    public void deleteItemByCode(ItemDto itemDto){
 
         String code = itemDto.getCode();
         ItemData itemData = itemDataRepository.findByCode(code);
-
+        itemData.getSuppliersData().forEach(supplierData ->
+                supplierData.getItemsData().remove(itemData));
         itemDataRepository.delete(itemData);
     }
 }
