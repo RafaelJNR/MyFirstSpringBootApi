@@ -3,6 +3,7 @@ package com.bbsw.myFirstApi.item.dto;
 import com.bbsw.myFirstApi.item.enums.StateEnum;
 import com.bbsw.myFirstApi.pricereduction.dto.PriceReductionDto;
 import com.bbsw.myFirstApi.supplier.dto.SupplierDTO;
+import com.bbsw.myFirstApi.user.dto.UserDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ItemDto {
+public class ItemDTO {
 
     String code;
     String description;
@@ -22,6 +23,7 @@ public class ItemDto {
     LocalDate creationDate;
 
     String username;
+    List<UserDTO> users;
 
     private List<PriceReductionDto> priceReductions;
 

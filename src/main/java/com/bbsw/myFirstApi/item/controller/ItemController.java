@@ -1,6 +1,7 @@
 package com.bbsw.myFirstApi.item.controller;
 
-import com.bbsw.myFirstApi.item.dto.ItemDto;
+import com.bbsw.myFirstApi.item.dto.DeactivateDTO;
+import com.bbsw.myFirstApi.item.dto.ItemDTO;
 import com.bbsw.myFirstApi.item.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class ItemController {
     @GetMapping("/itemdata/getall")
     public ResponseEntity<?> getAllItemsData(){
 
-        List<ItemDto> itemsData = itemService.findAllItems();
+        List<ItemDTO> itemsData = itemService.findAllItems();
         try{
             return ResponseEntity.ok(itemService.findAllItems());
         }catch(Exception e){
@@ -30,7 +31,7 @@ public class ItemController {
     }
 
     @GetMapping("/itemdata")
-    public ResponseEntity<ItemDto> getItemData(@RequestParam String code){
+    public ResponseEntity<ItemDTO> getItemData(@RequestParam String code){
         try{
             return ResponseEntity.ok(itemService.findItem(code));
         }catch(Exception e){
@@ -44,7 +45,7 @@ public class ItemController {
 
         try{
 
-            ItemDto itemDto = itemService.findItem(code);
+            ItemDTO itemDto = itemService.findItem(code);
             itemService.deleteItemByCode(itemDto);
 
             return ResponseEntity.noContent().build();
@@ -56,25 +57,36 @@ public class ItemController {
     }
 
     @PostMapping("/itemdata")
-    public ResponseEntity<?> createItem(@RequestBody ItemDto itemDto){
+    public ResponseEntity<?> createItem(@RequestBody ItemDTO itemDto){
 
-        if (itemService.createItem(itemDto)==null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
-
-        }else{
+        if(itemService.createUpdateItem(itemDto, itemDto.getSuppliersData())==null){
             return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
         }
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(itemDto);
     }
 
     @PutMapping("/itemdata")
-    public ResponseEntity<?> updateCreateItem(@RequestBody ItemDto itemDto){
+    public ResponseEntity<ItemDTO> updateCreateItem(@RequestBody ItemDTO itemDto){
+        return new ResponseEntity<>(itemService.createUpdateItem(itemDto, itemDto.getSuppliersData()), HttpStatus.OK);
+    }
 
-            if(itemService.createUpdateItem(itemDto, itemDto.getSuppliersData())==null){
-                return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
-            }
-
-            return ResponseEntity.status(HttpStatus.FOUND).body(itemDto);
+    @PutMapping("/itemdata/discontinue")
+    public ResponseEntity<?> discontinueItem(@RequestBody DeactivateDTO deactivate){
 
 
-}
+        itemService.discontueItem(deactivate);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+
+        //return ResponseEntity.notFound().build();
+
+    }
+
+
+
+
+
+
 }

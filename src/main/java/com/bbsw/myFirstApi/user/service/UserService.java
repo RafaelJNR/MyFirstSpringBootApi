@@ -3,6 +3,7 @@ package com.bbsw.myFirstApi.user.service;
 import com.bbsw.myFirstApi.user.dto.UserDTO;
 import com.bbsw.myFirstApi.user.model.UserData;
 import com.bbsw.myFirstApi.user.repository.UserDataRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bbsw.myFirstApi.encoder.Encoder;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+    ModelMapper modelmapper = new ModelMapper();
 
     @Autowired
     private UserDataRepository userDataRepository;
@@ -21,10 +24,12 @@ public class UserService {
         Encoder encoder = new Encoder();
 
         return usersData.stream().map(userData -> {
-            UserDTO userDTO = new UserDTO();
+            UserDTO userDTO;
+            userDTO = modelmapper.map(userData, UserDTO.class);
+            /*
             userDTO.setUsername(encoder.getDecipher(userData.getUsername()));
             userDTO.setPassword(encoder.getDecipher(userData.getPassword()));
-            userDTO.setRol(userData.getRol());
+            userDTO.setRol(userData.getRol());*/
             return userDTO;
         }).toList();
 
@@ -40,16 +45,16 @@ public class UserService {
         return userDto;
     }
 
-    public UserDTO findUserByPasswordAndUsername(String username, String password){
+    public String findUserByPasswordAndUsername(String username, String password){
 
         UserDTO userDto = new UserDTO();
         Encoder encoder = new Encoder();
         UserData usersData = userDataRepository.findByPasswordAndUsername(encoder.getCipher(username), encoder.getCipher(password));
         userDto.setUsername(encoder.getDecipher(usersData.getUsername()));
-        userDto.setPassword(encoder.getDecipher(usersData.getPassword()));
+        //userDto.setPassword(encoder.getDecipher(usersData.getPassword())); TODO esto no se tiene que devolver nunca
         userDto.setRol(usersData.getRol());
 
-        return userDto;
+        return encoder.getDecipher(usersData.getUsername());
 
     }
 

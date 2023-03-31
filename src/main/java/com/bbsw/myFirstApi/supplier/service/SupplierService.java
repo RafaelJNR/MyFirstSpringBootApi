@@ -18,9 +18,7 @@ public class SupplierService {
         List<SupplierData> suppliersData = supplierDataRepository.findAll();
 
         return suppliersData.stream().map(supplierData -> {
-            String name;
-            name=(supplierData.getName());
-            return name;
+            return (supplierData.getName());
         }).toList();
 
     }

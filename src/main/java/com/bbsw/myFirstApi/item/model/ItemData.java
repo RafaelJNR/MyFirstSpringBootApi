@@ -42,12 +42,18 @@ public class ItemData {
     String userName;
 
     @OneToMany(mappedBy="itemdata", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference("itemDeactivated")
+    @Column(name = "deactivate")
+    private List<Deactivate> deactivate;
+
+    @OneToMany(mappedBy="itemdata", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference("itemPriceReduction")
     @Column(name = "pricereduction")
     private List<PriceReductionData> priceReductions;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
+            schema = "erp",
             name = "itemdata_supplierdata",
             joinColumns = @JoinColumn(name = "itemdata_id"),
             inverseJoinColumns = @JoinColumn(name = "supplierdata_id"),

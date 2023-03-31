@@ -2,7 +2,8 @@ package com.bbsw.myFirstApi.user.model;
 
 import com.bbsw.myFirstApi.user.enums.RolEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Table(name = "userdata", schema ="erp")
